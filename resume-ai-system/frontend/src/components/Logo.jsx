@@ -1,0 +1,18 @@
+export default function Logo({ className = '' }) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="2" y="2" width="28" height="28" rx="6" fill="currentColor" />
+      <path
+        d="M10 22V10h2.4v4.8h6.4V10H21v12h-2.2v-5.4h-6.4V22H10z"
+        fill="#faf6ee"
+      />
+      <circle cx="24" cy="9" r="2" fill="#e25822" />
+    </svg>
+  )
+}

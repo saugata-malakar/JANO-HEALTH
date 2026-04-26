@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-image:
+      radial-gradient(at 20% 8%, rgba(226, 88, 34, 0.04) 0, transparent 35%),
+      radial-gradient(at 90% 90%, rgba(28, 65, 89, 0.05) 0, transparent 40%);
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: theme('colors.flame.DEFAULT');
+    color: theme('colors.ink.50');
+  }
+
+  /* Custom scrollbar — restrained */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.ink.300');
+    border-radius: 5px;
+    border: 2px solid theme('colors.ink.50');
+  }
+  ::-webkit-scrollbar-thumb:hover { background: theme('colors.ink.500'); }
+}
+
+@layer components {
+  .editorial-headline {
+    @apply font-display tracking-editorial leading-[0.95];
+  }
+
+  .paper-card {
+    @apply relative bg-ink-50 border border-ink-200 rounded-2xl shadow-editorial;
+  }
+
+  .paper-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.04 0 0 0 0 0.04 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
+           font-medium text-sm transition-all duration-200 disabled:opacity-50
+           disabled:cursor-not-allowed select-none;
+  }
+
+  .btn-primary {
+    @apply btn bg-ink-900 text-ink-50 hover:bg-ink-800 active:scale-[0.98]
+           shadow-[0_2px_0_0_rgb(20_14_8/0.4)];
+  }
+
+  .btn-secondary {
+    @apply btn bg-ink-100 text-ink-800 hover:bg-ink-200 border border-ink-200;
+  }
+
+  .btn-flame {
+    @apply btn bg-flame text-ink-50 hover:bg-flame-dark active:scale-[0.98];
+  }
+
+  .label-overline {
+    @apply text-[10px] uppercase tracking-[0.18em] font-semibold text-ink-500;
+  }
+
+  .input {
+    @apply w-full px-3.5 py-2.5 rounded-lg border border-ink-300 bg-ink-50
+           text-sm text-ink-900 placeholder:text-ink-400
+           focus:outline-none focus:border-ink-700 focus:ring-2 focus:ring-ink-200
+           transition-colors;
+  }
+
+  .stat-num {
+    @apply font-display font-semibold tabular-nums tracking-tight;
+  }
+}
+
+/* Shimmer effect for loading skeletons */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    theme('colors.ink.100') 0%,
+    theme('colors.ink.200') 50%,
+    theme('colors.ink.100') 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
