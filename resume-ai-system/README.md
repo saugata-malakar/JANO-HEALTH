@@ -6,10 +6,22 @@
 
 | | |
 |---|---|
-| **Live demo** | _filled in after deploy_ |
-| **Backend API** | _filled in after deploy_ — Swagger UI at `/docs` |
-| **Repository** | _this repo_ |
+| **Repository** | https://github.com/saugata-malakar/JANO-HEALTH |
 | **Stack** | Python 3.12 · FastAPI · Anthropic Claude · sentence-transformers · React 18 · Vite · Tailwind · Clerk |
+
+## 🚀 One-click deploy
+
+Click either button to spin up your own live instance — no local setup needed.
+
+[![Deploy Frontend with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsaugata-malakar%2FJANO-HEALTH&root-directory=resume-ai-system%2Ffrontend&env=VITE_BYPASS_AUTH&envDescription=Set%20to%20%22true%22%20for%20demo%20mode%20without%20Clerk&project-name=hiresense-frontend&repository-name=hiresense-frontend)
+
+[![Deploy Backend to HF Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/deploy-on-spaces-md.svg)](https://huggingface.co/new-space?template=docker&name=hiresense-api)
+
+After clicking:
+
+- **Vercel:** confirm the import → set `VITE_BYPASS_AUTH=true` (or leave blank for full auth) → Deploy. Live in ~2 minutes.
+- **HF Spaces:** Docker SDK → upload the contents of [`deploy/huggingface-space/`](deploy/huggingface-space/) plus the [`backend/`](backend/) folder → push. Live in ~5 minutes (first build pulls PyTorch + downloads embedding model).
+- After both are up, set `VITE_API_BASE_URL` on Vercel to your HF Space URL so the frontend calls the deployed backend.
 
 ---
 
