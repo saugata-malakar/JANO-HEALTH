@@ -62,8 +62,9 @@ class ResumeParser:
             return self._regex_fallback(text)
 
         # If the LLM gave us almost nothing useful, augment with regex
-        if not parsed.email or not parsed.skills:
+        if not parsed.email or not parsed.skills or not parsed.name:
             fallback = self._regex_fallback(text)
+            parsed.name = parsed.name or fallback.name
             parsed.email = parsed.email or fallback.email
             parsed.phone = parsed.phone or fallback.phone
             if not parsed.skills:
@@ -110,6 +111,21 @@ class ResumeParser:
             r"https?://(?:www\.)?linkedin\.com/in/[\w-]+", text
         )
 
+        # Name heuristic: first non-trivial line that looks like a person's name
+        # (2-4 capitalized words, no digits, no @ sign).
+        name = None
+        for line in text.splitlines()[:8]:
+            stripped = line.strip()
+            if (
+                stripped
+                and 4 <= len(stripped) <= 60
+                and "@" not in stripped
+                and not re.search(r"\d", stripped)
+                and re.match(r"^[A-Z][A-Za-z'.-]+(\s+[A-Z][A-Za-z'.-]+){1,3}$", stripped)
+            ):
+                name = stripped
+                break
+
         # Skill heuristic: a curated list of common tech terms
         skill_vocab = {
             "python", "java", "javascript", "typescript", "go", "rust", "c++",
@@ -126,6 +142,7 @@ class ResumeParser:
         found_skills = sorted(s for s in skill_vocab if re.search(rf"\b{re.escape(s)}\b", text_lower))
 
         return ParsedResume(
+            name=name,
             email=email_match.group(0) if email_match else None,
             phone=phone_match.group(1) if phone_match else None,
             links=Links(

@@ -56,6 +56,11 @@ export default function Dashboard() {
   const [results, setResults] = useState([])
   const [error, setError] = useState(null)
   const [loadedDemo, setLoadedDemo] = useState(false)
+  const [config, setConfig] = useState(null)
+
+  useEffect(() => {
+    api.config().then(setConfig).catch(() => setConfig(null))
+  }, [])
 
   // Restore previous batch on mount
   useEffect(() => {
@@ -122,15 +127,16 @@ export default function Dashboard() {
     sessionStorage.removeItem(SESSION_KEY)
   }
 
-  const canRun = useMemo(() => {
-    return (
-      !running &&
-      files.length > 0 &&
-      jd.title.trim().length > 2 &&
-      jd.description.trim().length > 20 &&
-      skillsRaw.trim().length > 0
-    )
-  }, [running, files, jd, skillsRaw])
+  const validation = useMemo(() => {
+    const reasons = []
+    if (files.length === 0) reasons.push('Drop at least one résumé.')
+    if (jd.title.trim().length < 3) reasons.push('Title needs at least 3 characters.')
+    if (jd.description.trim().length < 10) reasons.push('Description needs at least 10 characters.')
+    if (skillsRaw.trim().length === 0) reasons.push('Add at least one required skill.')
+    return reasons
+  }, [files, jd, skillsRaw])
+
+  const canRun = !running && validation.length === 0
 
   const buildJD = () => ({
     ...jd,
@@ -213,6 +219,19 @@ export default function Dashboard() {
           )}
         </div>
       </header>
+
+      {config && !config.llm_configured && (
+        <div className="mb-6 paper-card p-4 border-ink-300 bg-ink-100/40 flex items-start gap-3">
+          <AlertTriangle className="h-4 w-4 text-ink-700 mt-0.5 flex-shrink-0" />
+          <div className="flex-1 text-sm text-ink-700">
+            <span className="font-medium">Demo mode:</span> no LLM API key is configured, so résumé parsing
+            falls back to a regex extractor. Scoring still works with deterministic + heuristic dimensions
+            — but for the full experience (LLM-judged Achievement / Ownership and tailored questions),
+            add <code className="text-xs px-1 py-0.5 rounded bg-ink-200">ANTHROPIC_API_KEY</code> to{' '}
+            <code className="text-xs px-1 py-0.5 rounded bg-ink-200">backend/.env</code> and restart the API.
+          </div>
+        </div>
+      )}
 
       <AnimatePresence>
         {error && (
@@ -404,12 +423,12 @@ export default function Dashboard() {
             )}
           </button>
 
-          {!canRun && !running && (
-            <p className="text-xs text-ink-500 text-center -mt-3">
-              {files.length === 0
-                ? 'Drop at least one résumé.'
-                : 'Fill in title, description, and required skills.'}
-            </p>
+          {!canRun && !running && validation.length > 0 && (
+            <ul className="text-xs text-ink-500 text-center -mt-3 space-y-0.5">
+              {validation.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
           )}
         </section>
       </div>
